@@ -21,9 +21,16 @@ func NewWalletHandler(router *fasthttprouter.Router, wcase domain.WalletUsecase)
 }
 
 func (w *WalletHandler) Create(ctx *fasthttp.RequestCtx) {
+	iin := string(ctx.Request.Header.Cookie("UserIIN"))
+	if err := w.WUsecase.Create(ctx, iin); err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+	ctx.SetStatusCode(fasthttp.StatusOK)
 }
 
 func (w *WalletHandler) Deposit(ctx *fasthttp.RequestCtx) {
+
 }
 
 func (w *WalletHandler) Transfer(ctx *fasthttp.RequestCtx) {
