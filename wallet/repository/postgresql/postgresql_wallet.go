@@ -33,6 +33,16 @@ func (w *walletPostgresqlRepository) Create(ctx context.Context, iin string) err
 }
 
 func (w *walletPostgresqlRepository) Deposit(ctx context.Context, walletID uint64, amount uint64) error {
+	var wallet domain.Wallet
+	if err := w.Conn.Where(&domain.Wallet{ID: walletID}).First(&wallet).Error; err != nil {
+		return err
+	}
+
+	wallet.Balance += amount
+	if err := w.Conn.Save(wallet).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 
