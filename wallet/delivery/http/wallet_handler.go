@@ -26,6 +26,7 @@ func NewWalletHandler(router *fasthttprouter.Router, wcase domain.WalletUsecase)
 func (w *WalletHandler) Create(ctx *fasthttp.RequestCtx) {
 	iin := string(ctx.Request.Header.Cookie("UserIIN"))
 	if err := w.WUsecase.Create(ctx, iin); err != nil {
+		fmt.Fprintf(ctx, "Error: %v", err)
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		return
 	}
@@ -36,6 +37,7 @@ func (w *WalletHandler) Deposit(ctx *fasthttp.RequestCtx) {
 	walletID := binary.BigEndian.Uint64(ctx.FormValue("walletID"))
 	amount := binary.BigEndian.Uint64(ctx.FormValue("amount"))
 	if err := w.WUsecase.Deposit(ctx, walletID, amount); err != nil {
+		fmt.Fprintf(ctx, "Error: %v", err)
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		return
 	}
@@ -47,6 +49,7 @@ func (w *WalletHandler) Transfer(ctx *fasthttp.RequestCtx) {
 	walletToID := binary.BigEndian.Uint64(ctx.FormValue("walletToID"))
 	amount := binary.BigEndian.Uint64(ctx.FormValue("amount"))
 	if err := w.WUsecase.Transfer(ctx, walletFromID, walletToID, amount); err != nil {
+		fmt.Fprintf(ctx, "Error: %v", err)
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		return
 	}
@@ -57,6 +60,7 @@ func (w *WalletHandler) GetUserWallets(ctx *fasthttp.RequestCtx) {
 	iin := string(ctx.Request.Header.Cookie("UserIIN"))
 	wallets, err := w.WUsecase.GetUserWallets(ctx, iin)
 	if err != nil {
+		fmt.Fprintf(ctx, "Error: %v", err)
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		return
 	}
