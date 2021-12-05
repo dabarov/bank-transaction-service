@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/binary"
+	"fmt"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/dabarov/bank-transaction-service/domain"
@@ -53,4 +54,12 @@ func (w *WalletHandler) Transfer(ctx *fasthttp.RequestCtx) {
 }
 
 func (w *WalletHandler) GetUserWallets(ctx *fasthttp.RequestCtx) {
+	iin := string(ctx.Request.Header.Cookie("UserIIN"))
+	wallets, err := w.WUsecase.GetUserWallets(ctx, iin)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintf(ctx, "Wallets: %v", wallets)
+	ctx.SetStatusCode(fasthttp.StatusOK)
 }
