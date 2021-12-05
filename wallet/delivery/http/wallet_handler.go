@@ -42,6 +42,14 @@ func (w *WalletHandler) Deposit(ctx *fasthttp.RequestCtx) {
 }
 
 func (w *WalletHandler) Transfer(ctx *fasthttp.RequestCtx) {
+	walletFromID := binary.BigEndian.Uint64(ctx.FormValue("walletFromID"))
+	walletToID := binary.BigEndian.Uint64(ctx.FormValue("walletToID"))
+	amount := binary.BigEndian.Uint64(ctx.FormValue("amount"))
+	if err := w.WUsecase.Transfer(ctx, walletFromID, walletToID, amount); err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+	ctx.SetStatusCode(fasthttp.StatusOK)
 }
 
 func (w *WalletHandler) GetUserWallets(ctx *fasthttp.RequestCtx) {
