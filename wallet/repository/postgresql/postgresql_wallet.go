@@ -69,5 +69,9 @@ func (w *walletPostgresqlRepository) Transfer(ctx context.Context, walletFromID 
 }
 
 func (w *walletPostgresqlRepository) GetUserWallets(ctx context.Context, iin string) ([]*domain.Wallet, error) {
-	return nil, nil
+	var wallets []*domain.Wallet
+	if err := w.Conn.Where(&domain.Wallet{UserIIN: iin}).Find(&wallets).Error; err != nil {
+		return wallets, err
+	}
+	return wallets, nil
 }
