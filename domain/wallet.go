@@ -6,7 +6,7 @@ type Wallet struct {
 	ID                  uint64 `json:"id"`
 	UserIIN             string `json:"user"`
 	LastTransactionDate string `json:"last_transaction_date"`
-	Balance             string `json:"balance"`
+	Balance             uint64 `json:"balance"`
 	CreatedAt           string `json:"created_at"`
 }
 
