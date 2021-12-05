@@ -47,6 +47,24 @@ func (w *walletPostgresqlRepository) Deposit(ctx context.Context, walletID uint6
 }
 
 func (w *walletPostgresqlRepository) Transfer(ctx context.Context, walletFromID uint64, walletToID uint64, amount uint64) error {
+	var walletFrom domain.Wallet
+	var walletTo domain.Wallet
+	if err := w.Conn.Where(&domain.Wallet{ID: walletFromID}).First(&walletFrom).Error; err != nil {
+		return err
+	}
+	if err := w.Conn.Where(&domain.Wallet{ID: walletToID}).First(&walletTo).Error; err != nil {
+		return err
+	}
+
+	walletFrom.Balance -= amount
+	walletTo.Balance += amount
+	if err := w.Conn.Save(walletFrom).Error; err != nil {
+		return err
+	}
+	if err := w.Conn.Save(walletTo).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 
