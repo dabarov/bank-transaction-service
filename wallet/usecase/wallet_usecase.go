@@ -19,7 +19,7 @@ func NewWalletUsecase(w *domain.WalletRepository, timeout time.Duration) domain.
 	}
 }
 
-func (w *walletUsecase) Create(ctx context.Context, iin uint64) error {
+func (w *walletUsecase) Create(ctx context.Context, iin string) error {
 	return nil
 }
 

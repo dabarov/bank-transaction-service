@@ -15,7 +15,7 @@ func NewWalletRedisRepository(redisClient *redis.Client) domain.WalletRepository
 	return &walletRedisRepository{redisClient}
 }
 
-func (w *walletRedisRepository) Create(ctx context.Context, iin uint64) error {
+func (w *walletRedisRepository) Create(ctx context.Context, iin string) error {
 	return nil
 }
 

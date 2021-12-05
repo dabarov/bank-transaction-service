@@ -15,7 +15,8 @@ func NewWalletPostgresqlRepository(Conn *gorm.DB) domain.WalletRepository {
 	return &walletPostgresqlRepository{Conn}
 }
 
-func (w *walletPostgresqlRepository) Create(ctx context.Context, iin uint64) error {
+func (w *walletPostgresqlRepository) Create(ctx context.Context, iin string) error {
+
 	return nil
 }
 
