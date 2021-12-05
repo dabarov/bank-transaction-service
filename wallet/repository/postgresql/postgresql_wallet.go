@@ -20,14 +20,14 @@ func (w *walletPostgresqlRepository) Create(ctx context.Context, iin string) err
 	return nil
 }
 
-func (w *walletPostgresqlRepository) Deposit(ctx context.Context, wallet *domain.Wallet, amount uint64) error {
+func (w *walletPostgresqlRepository) Deposit(ctx context.Context, walletID uint64, amount uint64) error {
 	return nil
 }
 
-func (w *walletPostgresqlRepository) Transfer(ctx context.Context, walletFrom *domain.Wallet, walletTo *domain.Wallet, amount uint64) error {
+func (w *walletPostgresqlRepository) Transfer(ctx context.Context, walletFromID uint64, walletToID uint64, amount uint64) error {
 	return nil
 }
 
-func (w *walletPostgresqlRepository) GetUserWallets(ctx context.Context, user *domain.User) ([]*domain.Wallet, error) {
+func (w *walletPostgresqlRepository) GetUserWallets(ctx context.Context, iin string) ([]*domain.Wallet, error) {
 	return nil, nil
 }

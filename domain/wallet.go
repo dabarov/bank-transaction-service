@@ -12,14 +12,14 @@ type Wallet struct {
 
 type WalletUsecase interface {
 	Create(ctx context.Context, iin string) error
-	Deposit(ctx context.Context, wallet *Wallet, amount uint64) error
-	Transfer(ctx context.Context, walletFrom *Wallet, walletTo *Wallet, amount uint64) error
-	GetUserWallets(ctx context.Context, user *User) ([]*Wallet, error)
+	Deposit(ctx context.Context, walletID uint64, amount uint64) error
+	Transfer(ctx context.Context, walletFromID uint64, walletToID uint64, amount uint64) error
+	GetUserWallets(ctx context.Context, iin string) ([]*Wallet, error)
 }
 
 type WalletRepository interface {
 	Create(ctx context.Context, iin string) error
-	Deposit(ctx context.Context, wallet *Wallet, amount uint64) error
-	Transfer(ctx context.Context, walletFrom *Wallet, walletTo *Wallet, amount uint64) error
-	GetUserWallets(ctx context.Context, user *User) ([]*Wallet, error)
+	Deposit(ctx context.Context, walletID uint64, amount uint64) error
+	Transfer(ctx context.Context, walletFromID uint64, walletToID uint64, amount uint64) error
+	GetUserWallets(ctx context.Context, iin string) ([]*Wallet, error)
 }

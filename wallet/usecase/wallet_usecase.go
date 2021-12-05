@@ -23,14 +23,14 @@ func (w *walletUsecase) Create(ctx context.Context, iin string) error {
 	return nil
 }
 
-func (w *walletUsecase) Deposit(ctx context.Context, wallet *domain.Wallet, amount uint64) error {
+func (w *walletUsecase) Deposit(ctx context.Context, walletID uint64, amount uint64) error {
 	return nil
 }
 
-func (w *walletUsecase) Transfer(ctx context.Context, walletFrom *domain.Wallet, walletTo *domain.Wallet, amount uint64) error {
+func (w *walletUsecase) Transfer(ctx context.Context, walletFromID uint64, walletToID uint64, amount uint64) error {
 	return nil
 }
 
-func (w *walletUsecase) GetUserWallets(ctx context.Context, user *domain.User) ([]*domain.Wallet, error) {
+func (w *walletUsecase) GetUserWallets(ctx context.Context, iin string) ([]*domain.Wallet, error) {
 	return nil, nil
 }

@@ -19,14 +19,14 @@ func (w *walletRedisRepository) Create(ctx context.Context, iin string) error {
 	return nil
 }
 
-func (w *walletRedisRepository) Deposit(ctx context.Context, wallet *domain.Wallet, amount uint64) error {
+func (w *walletRedisRepository) Deposit(ctx context.Context, walletID uint64, amount uint64) error {
 	return nil
 }
 
-func (w *walletRedisRepository) Transfer(ctx context.Context, walletFrom *domain.Wallet, walletTo *domain.Wallet, amount uint64) error {
+func (w *walletRedisRepository) Transfer(ctx context.Context, walletFromID uint64, walletToID uint64, amount uint64) error {
 	return nil
 }
 
-func (w *walletRedisRepository) GetUserWallets(ctx context.Context, user *domain.User) ([]*domain.Wallet, error) {
+func (w *walletRedisRepository) GetUserWallets(ctx context.Context, iin string) ([]*domain.Wallet, error) {
 	return nil, nil
 }
