@@ -1,6 +1,8 @@
 package http
 
 import (
+	"encoding/binary"
+
 	"github.com/buaazp/fasthttprouter"
 	"github.com/dabarov/bank-transaction-service/domain"
 	"github.com/valyala/fasthttp"
@@ -30,7 +32,13 @@ func (w *WalletHandler) Create(ctx *fasthttp.RequestCtx) {
 }
 
 func (w *WalletHandler) Deposit(ctx *fasthttp.RequestCtx) {
-
+	walletID := binary.BigEndian.Uint64(ctx.FormValue("walletID"))
+	amount := binary.BigEndian.Uint64(ctx.FormValue("amount"))
+	if err := w.WUsecase.Deposit(ctx, walletID, amount); err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		return
+	}
+	ctx.SetStatusCode(fasthttp.StatusOK)
 }
 
 func (w *WalletHandler) Transfer(ctx *fasthttp.RequestCtx) {
