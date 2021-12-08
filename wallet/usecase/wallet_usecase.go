@@ -2,35 +2,34 @@ package usecase
 
 import (
 	"context"
-	"time"
 
 	"github.com/dabarov/bank-transaction-service/domain"
 )
 
 type walletUsecase struct {
-	walletRepository *domain.WalletRepository
-	contextTimeout   time.Duration
+	walletRepository      domain.WalletDBRepository
+	walletRedisRepository domain.WalletRedisRepository
 }
 
-func NewWalletUsecase(w *domain.WalletRepository, timeout time.Duration) domain.WalletUsecase {
+func NewWalletUsecase(wDBR domain.WalletDBRepository, wRR domain.WalletRedisRepository) domain.WalletUsecase {
 	return &walletUsecase{
-		walletRepository: w,
-		contextTimeout:   timeout,
+		walletRepository:      wDBR,
+		walletRedisRepository: wRR,
 	}
 }
 
 func (w *walletUsecase) Create(ctx context.Context, iin string) error {
-	return nil
+	if InvalidIIN(iin) {
+		return domain.ErrIINIncorect
+	}
+	err := w.walletRepository.Create(ctx, iin)
+	return err
 }
 
-func (w *walletUsecase) Deposit(ctx context.Context, walletID uint64, amount uint64) error {
-	return nil
+func (w *walletUsecase) GetRedisValue(key string) (string, error) {
+	return w.walletRedisRepository.GetValue(key)
 }
 
-func (w *walletUsecase) Transfer(ctx context.Context, walletFromID uint64, walletToID uint64, amount uint64) error {
-	return nil
-}
-
-func (w *walletUsecase) GetUserWallets(ctx context.Context, iin string) ([]*domain.Wallet, error) {
-	return nil, nil
+func (w *walletUsecase) GetRedisSecret() string {
+	return w.walletRedisRepository.GetSecret()
 }
