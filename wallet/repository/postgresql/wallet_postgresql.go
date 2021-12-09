@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/dabarov/bank-transaction-service/domain"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -26,5 +27,16 @@ func (w *walletPostgresqlRepository) Create(ctx context.Context, iin string) err
 	}
 
 	err := w.Conn.Create(&wallet).Error
+	return err
+}
+
+func (w *walletPostgresqlRepository) Deposit(ctx context.Context, iin string, walletID uuid.UUID, amount uint64) error {
+	var wallet *domain.Wallet
+
+	if err := w.Conn.Where(&domain.Wallet{ID: walletID}).First(&wallet).Error; err != nil {
+		return err
+	}
+
+	err := w.Conn.Model(&wallet).Update("balance", wallet.Balance+amount).Error
 	return err
 }

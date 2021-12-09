@@ -26,3 +26,7 @@ func isNotNumber(str string) bool {
 	}
 	return false
 }
+
+func ZeroAmount(amount uint64) bool {
+	return amount == 0
+}

@@ -22,12 +22,14 @@ func (wallet *Wallet) BeforeCreate(tx *gorm.DB) error {
 
 type WalletUsecase interface {
 	Create(ctx context.Context, iin string) error
+	Deposit(ctx context.Context, iin string, walletID uuid.UUID, amount uint64) error
 	GetRedisValue(key string) (string, error)
 	GetRedisSecret() string
 }
 
 type WalletDBRepository interface {
 	Create(ctx context.Context, iin string) error
+	Deposit(ctx context.Context, iin string, walletID uuid.UUID, amount uint64) error
 }
 
 type WalletRedisRepository interface {
