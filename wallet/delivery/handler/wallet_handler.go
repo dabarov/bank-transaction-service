@@ -20,6 +20,7 @@ func NewWalletHandler(router *fasthttprouter.Router, wcase domain.WalletUsecase)
 	}
 	router.POST("/wallet/create/:iin", handler.Create)
 	router.POST("/wallet/deposit", handler.Deposit)
+	router.POST("/wallet/transfer", handler.Transfer)
 }
 
 func (w *WalletHandler) Create(ctx *fasthttp.RequestCtx) {
