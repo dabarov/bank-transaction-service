@@ -15,9 +15,9 @@ type Wallet struct {
 	CreatedAt           string    `json:"created_at"`
 }
 
-func (wallet *Wallet) BeforeCreate(tx *gorm.DB) error {
-	wallet.ID = uuid.New()
-	return nil
+func (wallet *Wallet) BeforeCreate(tx *gorm.DB) (err error) {
+	wallet.ID, err = uuid.NewUUID()
+	return err
 }
 
 type WalletUsecase interface {
