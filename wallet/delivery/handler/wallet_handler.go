@@ -46,3 +46,26 @@ func (w *WalletHandler) Deposit(ctx *fasthttp.RequestCtx) {
 		return
 	}
 }
+
+func (w *WalletHandler) Transfer(ctx *fasthttp.RequestCtx) {
+	iin := fmt.Sprintf("%s", ctx.UserValue("iin"))
+	amount := binary.BigEndian.Uint64(ctx.FormValue("amount"))
+	walletFromID, uuidFromErr := uuid.FromBytes(ctx.FormValue("walletID"))
+	if uuidFromErr != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Server error: %v", uuidFromErr)
+		return
+	}
+	walletToID, uuidToErr := uuid.FromBytes(ctx.FormValue("walletID"))
+	if uuidToErr != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Server error: %v", uuidToErr)
+		return
+	}
+
+	if err := w.walletUsecase.Transfer(ctx, iin, walletFromID, walletToID, amount); err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Server error: %v", err)
+		return
+	}
+}

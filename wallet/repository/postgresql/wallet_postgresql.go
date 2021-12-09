@@ -40,3 +40,35 @@ func (w *walletPostgresqlRepository) Deposit(ctx context.Context, iin string, wa
 	err := w.Conn.Model(&wallet).Update("balance", wallet.Balance+amount).Error
 	return err
 }
+
+func (w *walletPostgresqlRepository) Transfer(ctx context.Context, iin string, walletFromID uuid.UUID, walletToID uuid.UUID, amount uint64) error {
+	tx := w.Conn.Begin()
+	var walletFrom *domain.Wallet
+	var walletTo *domain.Wallet
+
+	if err := w.Conn.Where(&domain.Wallet{ID: walletFromID}).First(&walletFrom).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := w.Conn.Where(&domain.Wallet{ID: walletToID}).First(&walletTo).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if walletFrom.UserIIN != iin {
+		tx.Rollback()
+		return domain.ErrIINTransferDenied
+	}
+
+	if err := w.Conn.Model(&walletFrom).Update("balance", walletFrom.Balance-amount).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := w.Conn.Model(&walletTo).Update("balance", walletTo.Balance+amount).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+	return nil
+}

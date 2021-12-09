@@ -38,6 +38,17 @@ func (w *walletUsecase) Deposit(ctx context.Context, iin string, walletID uuid.U
 	return err
 }
 
+func (w *walletUsecase) Transfer(ctx context.Context, iin string, walletFromID uuid.UUID, walletToID uuid.UUID, amount uint64) error {
+	if InvalidIIN(iin) {
+		return domain.ErrIINIncorect
+	}
+	if ZeroAmount(amount) {
+		return domain.ErrZeroAmount
+	}
+	err := w.walletRepository.Transfer(ctx, iin, walletFromID, walletToID, amount)
+	return err
+}
+
 func (w *walletUsecase) GetRedisValue(key string) (string, error) {
 	return w.walletRedisRepository.GetValue(key)
 }
