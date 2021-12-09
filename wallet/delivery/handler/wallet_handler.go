@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/binary"
 	"fmt"
+	"strconv"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/dabarov/bank-transaction-service/domain"
@@ -25,7 +26,7 @@ func NewWalletHandler(router *fasthttprouter.Router, wcase domain.WalletUsecase)
 }
 
 func (w *WalletHandler) Create(ctx *fasthttp.RequestCtx) {
-	iin := fmt.Sprintf("%s", ctx.UserValue("iin"))
+	iin := fmt.Sprintf("%s", ctx.UserValue("userIIN"))
 	if err := w.walletUsecase.Create(ctx, iin); err != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		fmt.Fprintf(ctx, "Server error: %v", err)
@@ -34,9 +35,14 @@ func (w *WalletHandler) Create(ctx *fasthttp.RequestCtx) {
 }
 
 func (w *WalletHandler) Deposit(ctx *fasthttp.RequestCtx) {
-	iin := fmt.Sprintf("%s", ctx.UserValue("iin"))
-	amount := binary.BigEndian.Uint64(ctx.FormValue("amount"))
-	walletID, uuidErr := uuid.FromBytes(ctx.FormValue("walletID"))
+	iin := fmt.Sprintf("%s", ctx.UserValue("userIIN"))
+	amount, amountErr := strconv.ParseUint(string(ctx.FormValue("amount")), 10, 64)
+	if amountErr != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Server error: %v", amountErr)
+		return
+	}
+	walletID, uuidErr := uuid.ParseBytes(ctx.FormValue("walletID"))
 	if uuidErr != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		fmt.Fprintf(ctx, "Server error: %v", uuidErr)
@@ -50,15 +56,15 @@ func (w *WalletHandler) Deposit(ctx *fasthttp.RequestCtx) {
 }
 
 func (w *WalletHandler) Transfer(ctx *fasthttp.RequestCtx) {
-	iin := fmt.Sprintf("%s", ctx.UserValue("iin"))
+	iin := fmt.Sprintf("%s", ctx.UserValue("userIIN"))
 	amount := binary.BigEndian.Uint64(ctx.FormValue("amount"))
-	walletFromID, uuidFromErr := uuid.FromBytes(ctx.FormValue("walletID"))
+	walletFromID, uuidFromErr := uuid.FromBytes(ctx.FormValue("walletFromID"))
 	if uuidFromErr != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		fmt.Fprintf(ctx, "Server error: %v", uuidFromErr)
 		return
 	}
-	walletToID, uuidToErr := uuid.FromBytes(ctx.FormValue("walletID"))
+	walletToID, uuidToErr := uuid.FromBytes(ctx.FormValue("walletToID"))
 	if uuidToErr != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		fmt.Fprintf(ctx, "Server error: %v", uuidToErr)
@@ -73,7 +79,7 @@ func (w *WalletHandler) Transfer(ctx *fasthttp.RequestCtx) {
 }
 
 func (w *WalletHandler) GetUserWallets(ctx *fasthttp.RequestCtx) {
-	iin := fmt.Sprintf("%s", ctx.UserValue("iin"))
+	iin := fmt.Sprintf("%s", ctx.UserValue("userIIN"))
 	wallets, err := w.walletUsecase.GetUserWallets(ctx, iin)
 	if err != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
