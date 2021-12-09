@@ -21,6 +21,7 @@ func NewWalletHandler(router *fasthttprouter.Router, wcase domain.WalletUsecase)
 	router.POST("/wallet/create/:iin", handler.Create)
 	router.POST("/wallet/deposit", handler.Deposit)
 	router.POST("/wallet/transfer", handler.Transfer)
+	router.GET("/wallet", handler.GetUserWallets)
 }
 
 func (w *WalletHandler) Create(ctx *fasthttp.RequestCtx) {
@@ -69,4 +70,16 @@ func (w *WalletHandler) Transfer(ctx *fasthttp.RequestCtx) {
 		fmt.Fprintf(ctx, "Server error: %v", err)
 		return
 	}
+}
+
+func (w *WalletHandler) GetUserWallets(ctx *fasthttp.RequestCtx) {
+	iin := fmt.Sprintf("%s", ctx.UserValue("iin"))
+	wallets, err := w.walletUsecase.GetUserWallets(ctx, iin)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Server error: %v", err)
+		return
+	}
+	ctx.Response.Header.Set("Content-Type", "application/json")
+	ctx.Write(wallets)
 }

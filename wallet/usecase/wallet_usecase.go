@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/dabarov/bank-transaction-service/domain"
 	"github.com/google/uuid"
@@ -47,6 +48,18 @@ func (w *walletUsecase) Transfer(ctx context.Context, iin string, walletFromID u
 	}
 	err := w.walletRepository.Transfer(ctx, iin, walletFromID, walletToID, amount)
 	return err
+}
+
+func (w *walletUsecase) GetUserWallets(ctx context.Context, iin string) ([]byte, error) {
+	if InvalidIIN(iin) {
+		return nil, domain.ErrIINIncorect
+	}
+	walletArray, err := w.walletRepository.GetUserWallets(ctx, iin)
+	if err != nil {
+		return nil, err
+	}
+	responseJSON, jsonErr := json.Marshal(walletArray)
+	return responseJSON, jsonErr
 }
 
 func (w *walletUsecase) GetRedisValue(key string) (string, error) {
