@@ -12,7 +12,7 @@ import (
 	"github.com/dabarov/bank-transaction-service/wallet/repository/postgresql"
 	"github.com/dabarov/bank-transaction-service/wallet/repository/redis"
 	"github.com/dabarov/bank-transaction-service/wallet/usecase"
-	go_redis "github.com/go-redis/redis"
+	go_redis "github.com/go-redis/redis/v8"
 	"github.com/valyala/fasthttp"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
