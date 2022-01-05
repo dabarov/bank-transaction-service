@@ -6,10 +6,6 @@ const (
 	IINLength = 12
 )
 
-func InvalidField(field string) bool {
-	return field == ""
-}
-
 func InvalidIIN(IIN string) bool {
 	if isNotNumber(IIN) {
 		return true
