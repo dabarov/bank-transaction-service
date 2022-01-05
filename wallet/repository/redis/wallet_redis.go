@@ -1,10 +1,11 @@
 package redis
 
 import (
+	"context"
 	"time"
 
 	"github.com/dabarov/bank-transaction-service/domain"
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 )
 
 type walletRedisRepository struct {
@@ -22,7 +23,7 @@ func NewWalletRedisRepository(redisClient *redis.Client, timeout int, secret str
 }
 
 func (w *walletRedisRepository) GetValue(key string) (string, error) {
-	return w.redisClient.Get(key).Result()
+	return w.redisClient.Get(context.Background(), key).Result()
 }
 
 func (w *walletRedisRepository) GetSecret() string {
