@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/binary"
 	"fmt"
 	"strconv"
 
@@ -57,7 +56,12 @@ func (w *WalletHandler) Deposit(ctx *fasthttp.RequestCtx) {
 
 func (w *WalletHandler) Transfer(ctx *fasthttp.RequestCtx) {
 	iin := fmt.Sprintf("%s", ctx.UserValue("userIIN"))
-	amount := binary.BigEndian.Uint64(ctx.FormValue("amount"))
+	amount, amountErr := strconv.ParseUint(string(ctx.FormValue("amount")), 10, 64)
+	if amountErr != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		fmt.Fprintf(ctx, "Server error: %v", amountErr)
+		return
+	}
 	walletFromID, uuidFromErr := uuid.ParseBytes(ctx.FormValue("walletFromID"))
 	if uuidFromErr != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
