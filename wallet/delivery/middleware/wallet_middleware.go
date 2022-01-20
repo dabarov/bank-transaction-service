@@ -18,28 +18,29 @@ func NewWalletAuthMiddleware(walletUsecase domain.WalletUsecase, next fasthttp.R
 		walletUsecase: walletUsecase,
 	}
 	return func(ctx *fasthttp.RequestCtx) {
+		ctx.Response.Header.Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
+		ctx.Response.Header.Set("Access-Control-Request-Method", "POST, GET")
+		ctx.Response.Header.Set("Access-Control-Allow-Headers", "Content-Type, access-control-allow-origin, access-control-allow-headers, X-Custom-Header")
 
 		token, err := middleware.ExtractToken(ctx)
 		if err != nil {
 			log.Printf("Extract token error: %v", err)
-			ctx.SetStatusCode(fasthttp.StatusMovedPermanently)
-			ctx.Response.Header.Add("Location", "http://host.docker.internal:8080/login")
+			ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 			return
 		}
 
 		iin, err := middleware.ParseToken(token)
 		if err != nil {
 			log.Printf("Parse token error: %v", err)
-			ctx.SetStatusCode(fasthttp.StatusMovedPermanently)
-			ctx.Response.Header.Add("Location", "http://host.docker.internal:8080/login")
+			ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 			return
 		}
 
 		ok := middleware.FindToken(token, iin)
 		if !ok {
 			log.Printf("Getting token failed")
-			ctx.SetStatusCode(fasthttp.StatusMovedPermanently)
-			ctx.Response.Header.Add("Location", "http://host.docker.internal:8080/login")
+			ctx.SetStatusCode(fasthttp.StatusUnauthorized)
 			return
 		}
 
@@ -66,6 +67,7 @@ func (w *walletAuthMiddleware) ExtractToken(ctx *fasthttp.RequestCtx) (token str
 		err = fmt.Errorf("authorization header not found")
 		return
 	}
+	err = nil
 	return
 }
 
