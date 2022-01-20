@@ -52,5 +52,5 @@ func main() {
 	walletUsecase := usecase.NewWalletUsecase(dbRepository, redisRepository)
 	router := fasthttprouter.New()
 	handler.NewWalletHandler(router, walletUsecase)
-	log.Fatal(fasthttp.ListenAndServe(":"+httpport, middleware.NewWalletAuthMiddleware(walletUsecase, router.Handler)))
+	log.Fatal(fasthttp.ListenAndServe(":"+httpport, middleware.NewWalletAuthMiddleware(walletUsecase, middleware.NewCORSMiddleware(router.Handler))))
 }
