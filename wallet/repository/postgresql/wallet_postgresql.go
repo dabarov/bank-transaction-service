@@ -60,6 +60,11 @@ func (w *walletPostgresqlRepository) Transfer(ctx context.Context, iin string, w
 		return domain.ErrIINTransferDenied
 	}
 
+	if walletFrom.Balance < amount {
+		tx.Rollback()
+		return domain.ErrNotEnoughMoney
+	}
+
 	if err := w.Conn.Model(&walletFrom).Update("balance", walletFrom.Balance-amount).Error; err != nil {
 		tx.Rollback()
 		return err

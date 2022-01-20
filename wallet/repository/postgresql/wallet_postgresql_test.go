@@ -157,6 +157,28 @@ func TestTransfer(t *testing.T) {
 	}
 }
 
+func TestTransferNotEnoughMoney(t *testing.T) {
+	iin := ""
+	walletFromID, err := uuid.NewUUID()
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	walletToID, _ := uuid.NewUUID()
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	var amount uint64 = 100
+
+	mock.MatchExpectationsInOrder(false)
+	mock.ExpectBegin()
+	mock.ExpectQuery("SELECT").WithArgs(walletFromID).WillReturnRows(sqlmock.NewRows([]string{"id", "user", "last_transaction_date", "balance", "created_at"}).AddRow(walletFromID, iin, "date", 50, "date"))
+	mock.ExpectQuery("SELECT").WithArgs(walletToID).WillReturnRows(sqlmock.NewRows([]string{"id", "user", "last_transaction_date", "balance", "created_at"}).AddRow(walletToID, iin, "date", amount, "date"))
+	mock.ExpectCommit()
+	if err := repo.Transfer(testCtx, iin, walletFromID, walletToID, amount); err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
 func TestTransferNotFoundFrom(t *testing.T) {
 	iin := ""
 	walletFromID, err := uuid.NewUUID()
